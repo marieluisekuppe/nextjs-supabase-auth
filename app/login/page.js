@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -25,8 +26,14 @@ async function signIn(formData) {
 }
 
 export default async function LoginPage({ searchParams }) {
-  // ?error=true is set by signUp when Supabase says no
   const { error } = await searchParams;
+
+  // Already logged in? Then there is nothing to do here
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/profile");
+  }
 
   return (
     <main>
